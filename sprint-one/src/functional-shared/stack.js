@@ -4,10 +4,9 @@ var Stack = function() {
   var instance = {
     count: 0,
     storage: {},
-    push: stackMethods.push,
-    pop: stackMethods.pop,
-    size: stackMethods.size
   };
+
+  _.extend(instance, stackMethods);
 
   return instance;
 };

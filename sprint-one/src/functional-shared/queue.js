@@ -6,11 +6,9 @@ var Queue = function() {
     nextIn: 0,
     nextOut: 0,
     storage: {},
-
-    enqueue: queueMethods.enqueue,
-    dequeue: queueMethods.dequeue,
-    size: queueMethods.size
   };
+  
+  _.extend(instance, queueMethods);
 
   return instance;
 };
@@ -35,4 +33,3 @@ queueMethods.dequeue = function() {
 queueMethods.size = function() {
   return this.count;
 };
-
