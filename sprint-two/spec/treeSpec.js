@@ -41,4 +41,12 @@ describe('tree', function() {
     expect(tree.contains(8)).to.equal(true);
   });
 
+  it('should support deep nesting', function() {
+    tree.addChild(1);
+    tree.children[0].addChild(2);
+    tree.children[0].children[0].addChild(3);
+    tree.children[0].children[0].children[0].addChild(4);
+    expect(tree.contains(4)).to.equal(true);
+  });
+
 });
