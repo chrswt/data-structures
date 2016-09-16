@@ -5,24 +5,13 @@ var HashTable = function() {
 };
 
 HashTable.prototype.insert = function(k, v) {
-  var index = getIndexBelowMaxForKey(k, this._limit);
-  var bucket = this._storage.get(index);
-
-  if (bucket === undefined) {
-    this._storage.set(index, [[k, v]]); 
-  } else {
-    var tupleIndex = this.getIndex(index, k); 
-
-    if (tupleIndex === undefined) {
-      bucket.push([k, v]);
-    } else {
-      bucket[tupleIndex][1] = v;
-    }
-
-    this._storage.set(index, bucket);
-  }
+  this.overrideInsert(k, v);
   
   this._count++;
+
+  if (this._count > this._limit * 0.75) {
+    this.resize('double');
+  }
 };
 
 HashTable.prototype.retrieve = function(k) {
@@ -40,9 +29,7 @@ HashTable.prototype.remove = function(k) {
   var bucket = this._storage.get(index);
   var result;
 
-  if (bucket === undefined) {
-    return undefined;
-  } else {
+  if (bucket !== undefined) {
     var tupleIndex = this.getIndex(index, k);
 
     if (tupleIndex !== undefined) {
@@ -56,6 +43,10 @@ HashTable.prototype.remove = function(k) {
   }
 
   this._count--;
+
+  if (this._count < this._limit * 0.25) {
+    this.resize('halve');
+  }
 };
 
 HashTable.prototype.getIndex = function(index, k) {
@@ -69,6 +60,52 @@ HashTable.prototype.getIndex = function(index, k) {
     if (bucket[i][0] === k) {
       return i;
     }
+  }
+};
+
+HashTable.prototype.resize = function(option) {
+  var oldLimit = this._limit; 
+
+  if (option === 'halve') {
+    this._limit /= 2;
+  } else if (option === 'double') {
+    this._limit *= 2;
+  }
+
+  // copy all existing key-value pairs
+  var copy = [];
+  for (var i = 0; i < oldLimit; i++) {
+    if (this._storage.get(i) !== undefined) {
+      copy = copy.concat(this._storage.get(i));
+    }
+  }
+
+  // create a new empty storage
+  this._storage = LimitedArray(this._limit);
+  
+  // re-hash all key-value pairs
+  _.each(copy, function(tuple) { 
+    this.overrideInsert(tuple[0], tuple[1]);
+  }.bind(this));
+  //
+};
+
+HashTable.prototype.overrideInsert = function(k, v) {
+  var index = getIndexBelowMaxForKey(k, this._limit);
+  var bucket = this._storage.get(index);
+
+  if (bucket === undefined) {
+    this._storage.set(index, [[k, v]]); 
+  } else {
+    var tupleIndex = this.getIndex(index, k); 
+
+    if (tupleIndex === undefined) {
+      bucket.push([k, v]);
+    } else {
+      bucket[tupleIndex][1] = v;
+    }
+
+    this._storage.set(index, bucket);
   }
 };
 
