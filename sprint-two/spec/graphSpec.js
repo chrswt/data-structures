@@ -68,4 +68,16 @@ describe('graph', function() {
     expect(graph.hasEdge(3, 5)).to.equal(true);
     expect(graph.hasEdge(5, 5)).to.equal(true);
   });
+
+  it('should not allow duplicate edges and duplicate nodes to be added', function() {
+    graph.addNode(5);
+    graph.addNode(4);
+    graph.addNode(5);
+    graph.addEdge(4, 5);
+    graph.addEdge(5, 4);
+    graph.removeEdge(4, 5);
+    expect(graph.hasEdge(5, 4)).to.equal(false);
+    graph.removeNode(5);
+    expect(graph.contains(5)).to.equal(false);
+  });
 });
