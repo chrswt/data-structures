@@ -52,4 +52,15 @@ describe('linkedList', function() {
   });
 
   // add more tests here to test the functionality of linkedList
+  it('should support consecutive adding and removing of nodes', function() {
+    linkedList.addToTail(1);
+    linkedList.addToTail(2);
+    linkedList.removeHead();
+    linkedList.addToTail(3);
+    linkedList.addToTail(4);
+    linkedList.removeHead();
+    expect(linkedList.contains(2)).to.equal(false);
+    expect(linkedList.contains(4)).to.equal(true);
+    expect(linkedList.head.value).to.equal(3);
+  });
 });
