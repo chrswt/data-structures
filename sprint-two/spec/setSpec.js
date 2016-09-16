@@ -24,4 +24,11 @@ describe('set', function() {
     expect(set.contains('Mel Gibson')).to.equal(false);
   });
 
+  it('should not allow duplicate additions', function() {
+    set.add('Donald Glover');
+    set.add('Donald Glover');
+    set.remove('Donald Glover');
+    expect(set.contains('Donald Glover')).to.equal(false);
+  });
+
 });
