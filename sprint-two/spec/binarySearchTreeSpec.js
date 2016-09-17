@@ -69,4 +69,15 @@ describe('binarySearchTree', function() {
     binarySearchTree.breadthFirstLog(func);
     expect(array).to.eql([5, 2, 10, 1, 3, 15, 4]);
   });
+
+  it('should be able to find a tree\'s minimum and maximum depth', function() {
+    binarySearchTree.insert(3);
+    binarySearchTree.insert(4);
+    binarySearchTree.insert(7);
+    binarySearchTree.insert(2);
+    binarySearchTree.insert(1);
+    expect(binarySearchTree.findMinDepth()).to.equal(2);
+    expect(binarySearchTree.findMaxDepth()).to.equal(4);
+  });
+
 });
