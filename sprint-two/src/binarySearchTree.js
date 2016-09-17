@@ -10,22 +10,27 @@ var BinarySearchTree = function(value) {
 
 BinarySearchTree.prototype.insert = function(value) {
   var node = BinarySearchTree(value);
-  if (node.value < this.value) {
-    //go left
-    if (_.isEqual(this.left, {})) {
-      this.left = node;
-    } else {
-      this.left.insert(value);
-    }
 
-  } else {
-    //go right
-    if (_.isEqual(this.right, {})) {
-      this.right = node;
+  var traverse = function(node) {
+    if (node.value < this.value) {
+      //go left
+      if (_.isEqual(this.left, {})) {
+        this.left = node;
+      } else {
+        traverse.call(this.left, node);
+      }
+
     } else {
-      this.right.insert(value);
+      //go right
+      if (_.isEqual(this.right, {})) {
+        this.right = node;
+      } else {
+        traverse.call(this.right, node);
+      }
     }
-  }
+  };
+
+  traverse.call(this, node);
 };
 
 BinarySearchTree.prototype.contains = function(value) {
@@ -82,6 +87,42 @@ BinarySearchTree.prototype.breadthFirstLog = function(cb) {
   _.each(closeQueue, function(node) {
     cb(node.value);
   });
+};
+
+BinarySearchTree.prototype.findMinDepth = function() {
+  var minDepth;
+
+  if (_.isEqual(this.left, {}) && _.isEqual(this.right, {})) {
+    minDepth = 1;
+  } else {
+    if (_.isEqual(this.left, {})) {
+      minDepth = this.right.findMinDepth() + 1;
+    } else if (_.isEqual(this.right, {})) {
+      minDepth = this.left.findMinDepth() + 1;
+    } else {
+      minDepth = Math.min(this.left.findMinDepth(), this.right.findMinDepth()) + 1;
+    }
+  }
+
+  return minDepth;
+};
+
+BinarySearchTree.prototype.findMaxDepth = function() {
+  var maxDepth;
+
+  if (_.isEqual(this.left, {}) && _.isEqual(this.right, {})) {
+    maxDepth = 1;
+  } else {
+    if (_.isEqual(this.left, {})) {
+      maxDepth = this.right.findMaxDepth() + 1;
+    } else if (_.isEqual(this.right, {})) {
+      maxDepth = this.left.findMaxDepth() + 1;
+    } else {
+      maxDepth = Math.max(this.left.findMaxDepth(), this.right.findMaxDepth()) + 1;
+    }
+  }
+  
+  return maxDepth;
 };
 
 
