@@ -60,6 +60,31 @@ BinarySearchTree.prototype.depthFirstLog = function(cb) {
   }
 };
 
+BinarySearchTree.prototype.breadthFirstLog = function(cb) {
+  var openQueue = [];
+  var closeQueue = [];
+
+  var traverse = function (node) {
+    var currentNode = node;
+    closeQueue.push(currentNode);
+    if (!_.isEqual(currentNode.left, {})) {
+      openQueue.push(currentNode.left);
+    } 
+    if (!_.isEqual(currentNode.right, {})) {
+      openQueue.push(currentNode.right);
+    }
+    if (openQueue.length !== 0) {
+      traverse(openQueue.shift());
+    }
+  };
+
+  traverse(this);
+  _.each(closeQueue, function(node) {
+    cb(node.value);
+  });
+};
+
+
 /*
  * Complexity: What is the time complexity of the above functions?
  - insert: O(log n)
