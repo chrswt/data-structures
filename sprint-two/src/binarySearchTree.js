@@ -9,28 +9,11 @@ var BinarySearchTree = function(value) {
 };
 
 BinarySearchTree.prototype.insert = function(value) {
-  var node = BinarySearchTree(value);
+  this.cleanInsert(value);
 
-  var traverse = function(node) {
-    if (node.value < this.value) {
-      //go left
-      if (_.isEqual(this.left, {})) {
-        this.left = node;
-      } else {
-        traverse.call(this.left, node);
-      }
-
-    } else {
-      //go right
-      if (_.isEqual(this.right, {})) {
-        this.right = node;
-      } else {
-        traverse.call(this.right, node);
-      }
-    }
-  };
-
-  traverse.call(this, node);
+  if (this.findMinDepth() * 2 < this.findMaxDepth()) {
+    this.rebalance();
+  }
 };
 
 BinarySearchTree.prototype.contains = function(value) {
@@ -84,6 +67,7 @@ BinarySearchTree.prototype.breadthFirstLog = function(cb) {
   };
 
   traverse(this);
+  
   _.each(closeQueue, function(node) {
     cb(node.value);
   });
@@ -121,8 +105,79 @@ BinarySearchTree.prototype.findMaxDepth = function() {
       maxDepth = Math.max(this.left.findMaxDepth(), this.right.findMaxDepth()) + 1;
     }
   }
-  
+
   return maxDepth;
+};
+
+BinarySearchTree.prototype.rebalance = function() {
+  var list = [];
+
+  var traverse = function(node) {
+    list.push(node.value);
+    if (!_.isEqual(node.left, {})) {
+      traverse(node.left);
+    } 
+    if (!_.isEqual(node.right, {})) {
+      traverse(node.right);
+    }
+  };
+
+  traverse(this);
+
+  var sortedList = list.sort(function(a, b) {
+    return a > b;
+  });
+
+  var newTree;
+  var created = false;
+  var rebuild = function(sortedArray) {
+    var mid = Math.floor(sortedArray.length / 2);
+    if (created === false) {
+      newTree = BinarySearchTree(sortedArray[mid]);
+      created = true;
+    } else {
+      newTree.cleanInsert(sortedArray[mid]);
+    }
+
+    var leftArray = sortedArray.slice(0, mid);
+    var rightArray = sortedArray.slice(mid + 1);
+    
+    if (leftArray.length !== 0) {
+      rebuild(leftArray);
+    }
+    if (rightArray.length !== 0) {
+      rebuild(rightArray);
+    }
+
+    return newTree;
+  };
+  
+  // replace existing tree with newly built tree
+  var newTree = rebuild(sortedList);
+  this.value = newTree.value;
+  this.left = newTree.left;
+  this.right = newTree.right;
+};
+
+BinarySearchTree.prototype.cleanInsert = function(value) {
+  var node = BinarySearchTree(value);
+
+  if (node.value < this.value) {
+    //go left
+    if (_.isEqual(this.left, {})) {
+      this.left = node;
+    } else {
+      this.left.insert(value);
+    }
+
+  } else {
+    //go right
+    if (_.isEqual(this.right, {})) {
+      this.right = node;
+    } else {
+      this.right.insert(value);
+    }
+  }
 };
 
 
