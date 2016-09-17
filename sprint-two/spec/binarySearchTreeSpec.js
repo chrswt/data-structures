@@ -80,4 +80,38 @@ describe('binarySearchTree', function() {
     expect(binarySearchTree.findMaxDepth()).to.equal(4);
   });
 
+  it('rebalancing can be called on a tree', function() {
+    binarySearchTree.cleanInsert(4);
+    binarySearchTree.cleanInsert(3);
+    binarySearchTree.cleanInsert(2);
+    binarySearchTree.cleanInsert(1);
+    binarySearchTree.cleanInsert(6);
+    binarySearchTree.cleanInsert(7);
+    binarySearchTree.cleanInsert(10);
+    binarySearchTree.cleanInsert(9);
+    var array = [];
+    var func = function(value) { array.push(value); };
+    binarySearchTree.depthFirstLog(func);
+    expect(array).to.eql([5, 4, 3, 2, 1, 6, 7, 10, 9]);
+    binarySearchTree.rebalance();
+    array = [];
+    binarySearchTree.depthFirstLog(func);
+    expect(array).to.eql([5, 3, 2, 1, 4, 9, 7, 6, 10]);
+  });
+
+  it('should automatically rebalance when maxDepth > 2x minDepth, but should not rebalance when maxDepth is only 2x minDepth', function() {
+    var array = [];
+    var func = function(value) { array.push(value); };
+    binarySearchTree.insert(4);
+    binarySearchTree.insert(6);
+    binarySearchTree.insert(7);
+    binarySearchTree.insert(8);
+    binarySearchTree.depthFirstLog(func);
+    expect(array).to.eql([5, 4, 6, 7, 8]);
+    binarySearchTree.insert(9);
+    array = [];
+    binarySearchTree.depthFirstLog(func);
+    expect(array).to.eql([7, 5, 4, 6, 9, 8]);
+  });
+
 });
