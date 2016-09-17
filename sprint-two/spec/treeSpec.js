@@ -49,4 +49,38 @@ describe('tree', function() {
     expect(tree.contains(4)).to.equal(true);
   });
 
+  it('should have the parent property', function() {
+    expect(tree.hasOwnProperty('parent')).to.equal(true);
+  });
+
+  it('a child\'s parent property should point to its parent', function() {
+    tree.addChild(1);
+    expect(tree.children[0].parent).to.eql(tree);
+  });
+
+  it('should have the method "removeFromParent"', function() {
+    expect(tree.removeFromParent).to.be.a('function');
+  });
+
+  it('removeFromParent should dissociate both parent and child', function() {
+    tree.addChild(1);
+    var child = tree.children[0];
+    tree.children[0].removeFromParent();
+    expect(tree.contains(1)).to.equal(false);
+    expect(child.parent).to.equal(null);
+  });
+
+  it('should have a traverse method that accepts a callback', function() {
+    var array = [];
+    var store = function(val) {
+      array.push(val);
+    };
+    tree.addChild(1);
+    tree.addChild(2);
+    tree.children[0].addChild(3);
+    tree.children[0].addChild(4);
+    tree.children[1].addChild(5);
+    tree.traverse(store);
+    expect(array).to.eql([undefined, 1, 3, 4, 2, 5]);
+  });
 });
