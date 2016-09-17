@@ -52,4 +52,21 @@ describe('binarySearchTree', function() {
     binarySearchTree.depthFirstLog(func);
     expect(array).to.eql([5, 2, 1, 3, 4, 9, 7, 6, 8, 10]);
   });
+
+  it('should have a breadthFirstLog method', function() {
+    expect(binarySearchTree.breadthFirstLog).to.be.a('function');
+  });
+
+  it('should execute breadthFirstLog with a deeply nested, unbalanced, BST', function() {
+    var array = [];
+    var func = function(value) { array.push(value); };
+    binarySearchTree.insert(2);
+    binarySearchTree.insert(10);
+    binarySearchTree.insert(15);
+    binarySearchTree.insert(3);
+    binarySearchTree.insert(1);
+    binarySearchTree.insert(4);
+    binarySearchTree.breadthFirstLog(func);
+    expect(array).to.eql([5, 2, 10, 1, 3, 15, 4]);
+  });
 });
